@@ -65,8 +65,9 @@ def print_synergy(card_id):
     df_sorted = df2.sort_values(by='SGIH with named card (% improvement)', ascending=False)
     
     #print top 10
-    df_culled = df_sorted[df_sorted['N'] >= Nmin][:10]
-
+    #df_culled = df_sorted[df_sorted['N'] >= Nmin][:10]
+    df_culled = df_sorted[df_sorted['N'] >= Nmin]
+    
     st.dataframe(df_culled, hide_index=True)
 
 
