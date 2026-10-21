@@ -7,7 +7,7 @@ df = pd.read_csv("/Users/JHB/Desktop/synergy GIH/game_data_public.FRA.PremierDra
 
 
 # Load the CSV file into a DataFrame
-sample = round(len(df)/100)
+sample = round(len(df)/10)
 
 cols_oh = np.arange(18, 18 + 5 * setlen, 5)
 cols_gd = np.arange(19, 19 + 5 * setlen, 5)
