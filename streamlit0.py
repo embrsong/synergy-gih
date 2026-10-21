@@ -6,14 +6,14 @@ import numpy as np
 st.title('Synergy GIHWR for FRA')
 
 
-data_path = '/Users/JHB/Desktop/synergy GIH/game_data_public.FRA.PremierDraft.csv'
+data_path = 'game_data.parquet'
 
 setlen = 280 + 5 + 10 # main set, 5 basics, 10 SPG
 
 @st.cache_data
 def load(path):
     # Load the CSV file into a DataFrame
-    df = pd.read_csv(data_path)
+    df = pd.read_parquet(data_path)
     
     sample = len(df)
 
