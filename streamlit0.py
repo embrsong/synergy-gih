@@ -1,40 +1,20 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-
+import os
+from pathlib import Path
 
 st.title('Synergy GIHWR for FRA')
-
-
-data_path = 'game_data.parquet'
-
 setlen = 280 + 5 + 10 # main set, 5 basics, 10 SPG
 
 @st.cache_data
-def load(path):
-    # Load the CSV file into a DataFrame
-    df = pd.read_parquet(data_path)
-    
-    sample = len(df)
-
-    cols_oh = np.arange(18, 18 + 5 * setlen, 5)
-    cols_gd = np.arange(19, 19 + 5 * setlen, 5)
-
-    # Extract data as a NumPy array
-    cards_oh = df.iloc[:sample, cols_oh].to_numpy()
-    cards_gd = df.iloc[:sample, cols_gd].to_numpy()
-    # combine OH and GD
-    cards = cards_oh + cards_gd
-
-    wins = df.iloc[:sample, 17].to_numpy(dtype=bool)
-    
-    cardnames = []
-    for ID in range(setlen):
-        index = 18+5*ID+3
-        cardnames.append(df.columns[index][5:])
-    
+def load():
+    os.chdir(Path(__file__).resolve().parent)
+    cards = np.load('cards.npy')
+    wins = np.load('wins.npy')
+    cardnames = np.load('cardnames.npy')
+    cardnames = cardnames.tolist()
     return cards, wins, cardnames
-
 
 def print_synergy(card_id):
     Nmin = 100
@@ -59,19 +39,19 @@ def print_synergy(card_id):
     
     # regular GIH calculation
     # Total games/cards per column
-    DSK_GS = cards.sum(axis=0)
+    FRA_GS = cards.sum(axis=0)
     
     # Total cards for winning rows, excluding zero values
-    DSK_WINS = np.where(wins[:, None] & (cards != 0), cards, 0).sum(axis=0)
+    FRA_WINS = np.where(wins[:, None] & (cards != 0), cards, 0).sum(axis=0)
     
-    DSK_GIH = np.zeros(setlen)
+    FRA_GIH = np.zeros(setlen)
     for i in range(setlen):
-        if DSK_GS[i] !=0:
-            DSK_GIH[i] = DSK_WINS[i]/DSK_GS[i]
+        if FRA_GS[i] !=0:
+            FRA_GIH[i] = FRA_WINS[i]/FRA_GS[i]
             
     # now need to adjust by wr of other card
-    adjusted = s_card_gih - DSK_GIH
-    adjusted += s_card_gih - DSK_GIH[card_id] # this might be important - account for each card being good/bad
+    adjusted = s_card_gih - FRA_GIH
+    adjusted += s_card_gih - FRA_GIH[card_id] # this might be important - account for each card being good/bad
     
     # sort
     data = {
@@ -91,7 +71,7 @@ def print_synergy(card_id):
 
 
 
-cards, wins, cardnames = load(data_path)
+cards, wins, cardnames = load()
 
 @st.fragment
 def card_lookup():
