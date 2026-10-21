@@ -27,7 +27,9 @@ for ID in range(setlen):
     cardnames.append(df.columns[index][5:])
 
 #%%
+cards_optimized = cards.astype(np.int8) 
+wins_optimized = wins.astype(np.bool_)
 
-np.save('cards', cards)
-np.save('wins', wins)
+np.save('cards', cards_optimized)
+np.save('wins', wins_optimized)
 np.save('cardnames', cardnames)
